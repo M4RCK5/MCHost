@@ -2,7 +2,7 @@
 Small batch script to quickly deploy private Minecraft Servers
 
 ### Install
-Download [the script](https://github.com/M4RCK5/MCHost/archive/refs/heads/main.zip) and launch it.
+[Download the script](https://github.com/M4RCK5/MCHost/archive/refs/heads/main.zip) and launch it.
 
 Note: to auto-start the script with windows add it to "shell:startup".
 
