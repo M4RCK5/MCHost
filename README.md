@@ -1,7 +1,7 @@
 ## MCHost
 Small batch script to quickly deploy private Minecraft Servers
 
-#### Install
+### Install
 Download [the script](https://github.com/M4RCK5/MCHost/archive/refs/heads/main.zip) and launch it.
 
 Note: to auto-start the script with windows add it to "shell:startup".
@@ -19,7 +19,7 @@ Note: to auto-start the script with windows add it to "shell:startup".
  -c  Start only Crafty Controller.
 ```
 
-#### Dependencies
+### Dependencies
  - [playit.gg](https://github.com/playit-cloud/playit-agent/)
  - [Crafty Controller](https://gitlab.com/crafty-controller/crafty-4)
  - [Java](https://github.com/adoptium)
