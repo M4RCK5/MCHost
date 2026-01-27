@@ -1,5 +1,5 @@
 ## MCHost
-Batch script to quickly deploy private Minecraft Servers
+Batch script to quickly deploy Minecraft Servers
 
 ### Install
 [Download the script](/archive/refs/heads/main.zip) and launch it.
