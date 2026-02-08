@@ -119,6 +119,7 @@ if not exist "java\jre\bin\java.exe" (
 	echo Downloading JRE...
 	call :dl_java "jre_x64_windows" "java\java.zip"
 	call :ps_decomp "java\java.zip" "java"
+	del /f /q "java\java.zip" >nul 2>&1
 	for /d %%a in ("java\*") do ren "%%a" "jre" >nul 2>&1
 )
 
@@ -133,6 +134,7 @@ if not exist "crafty.exe" (
 	echo Downloading Crafty Controller...
 	call :gl_last "crafty-controller" "crafty-4" "Windows Package" "crafty.zip"
 	call :ps_decomp "crafty.zip" "."
+	del /f /q "crafty.zip" >nul 2>&1
 )
 
 md "app\config" >nul 2>&1
@@ -183,10 +185,9 @@ goto :eof
 
 :ps_decomp file output
 setlocal enabledelayedexpansion
-md "%~dp1" >nul 2>&1
 if "%~2"=="" (set "output=%~dpn1") else (set "output=%~2")
+md "!output!" >nul 2>&1
 powershell -noprofile -command "$progresspreference = 'silentlycontinue'; expand-archive -path '%~1' -destinationpath '%output%' -force"
-del /f /q "%~1"
 endlocal
-
 goto :eof
+
