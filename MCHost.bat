@@ -1,7 +1,6 @@
 @echo off
 
-set "old_workdir=%cd%"
-cd /d "%~dp0"
+pushd "%~dp0"
 
 if /i "%~1"=="-h" call :help & goto :quit
 if /i "%~1"=="-d" call :dash & goto :quit
@@ -23,7 +22,7 @@ call :playit
 call :crafty
 
 :quit
-cd /d "%old_workdir%"
+popd
 exit /b 0
 
 
@@ -190,4 +189,5 @@ md "!output!" >nul 2>&1
 powershell -noprofile -command "$progresspreference = 'silentlycontinue'; expand-archive -path '%~1' -destinationpath '%output%' -force"
 endlocal
 goto :eof
+
 
