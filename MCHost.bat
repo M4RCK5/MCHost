@@ -116,7 +116,7 @@ goto :eof
 if not exist "java\jre\bin\java.exe" (
 	echo.
 	echo Downloading JRE...
-	call :dl_java "jre_x64_windows" "java\java.zip"
+	call :dl_java "java\java.zip"
 	call :ps_decomp "java\java.zip" "java"
 	del /f /q "java\java.zip" >nul 2>&1
 	for /d %%a in ("java\*") do ren "%%a" "jre" >nul 2>&1
@@ -168,13 +168,13 @@ md "%~dp2" >nul 2>&1
 powershell -noprofile -command "$progresspreference = 'silentlycontinue'; invoke-webrequest -uri '%~1' -outfile '%~2'" >nul 2>&1
 goto :eof
 
-:dl_java pattern output
+:dl_java output
 setlocal enabledelayedexpansion
 set "api_url=https://api.adoptium.net/v3"
-md "%~dp2" >nul 2>&1
+md "%~dp1" >nul 2>&1
 for /f "delims=" %%a in ('powershell -noprofile -command "(invoke-restmethod '%api_url%/info/available_releases').most_recent_lts"') do set "latest=%%a"
-for /f "delims=" %%a in ('powershell -noprofile -command "(invoke-restmethod '%api_url%/assets/latest/%latest%/hotspot').binary.package.link" ^| findstr "%~1"') do set "package_link=%%a"
-powershell -noprofile -command "$progresspreference = 'silentlycontinue'; invoke-webrequest -uri '%package_link%' -outfile '%~2'" >nul 2>&1
+set "dl_url=!api_url!/binary/latest/!latest!/ga/windows/x64/jre/hotspot/normal/eclipse"
+powershell -noprofile -command "$progresspreference = 'silentlycontinue'; invoke-webrequest -uri '!dl_url!' -outfile '%~1'" >nul 2>&1
 endlocal
 goto :eof
 
@@ -186,8 +186,7 @@ goto :eof
 setlocal enabledelayedexpansion
 if "%~2"=="" (set "output=%~dpn1") else (set "output=%~2")
 md "!output!" >nul 2>&1
-powershell -noprofile -command "$progresspreference = 'silentlycontinue'; expand-archive -path '%~1' -destinationpath '%output%' -force"
+powershell -noprofile -command "$progresspreference = 'silentlycontinue'; expand-archive -path '%~1' -destinationpath '%output%' -force" >nul 2>&1
 endlocal
 goto :eof
-
 
