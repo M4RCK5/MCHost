@@ -125,7 +125,7 @@ if not exist "java\jre\bin\java.exe" (
 if not exist "playit.exe" (
 	echo.
 	echo Downloading playit.gg agent...
-	call :dl "https://github.com/playit-cloud/playit-agent/releases/latest/download/playit-windows-x86_64-signed.exe" "playit.exe"
+	call :dl "https://github.com/playit-cloud/playit-agent/releases/download/v0.17.1/playit-windows-x86_64-signed.exe" "playit.exe"
 )
 
 if not exist "crafty.exe" (
