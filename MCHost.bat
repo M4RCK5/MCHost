@@ -60,8 +60,10 @@ goto :eof
 :workdir
 set "custom_workdir="
 set "workdir=%systemdrive%\MCHost"
-if exist "MCHost.txt" set /p custom_workdir=<MCHost.txt
-if exist "%custom_workdir%" if exist "%custom_workdir%\" set "workdir=%custom_workdir%\MCHost"
+
+for /f "delims=" %%a in (MCHost.txt) do (
+    for /d %%b in (%%~a) do set "workdir=%%~fb\MCHost"
+)
 
 md "%workdir%" >nul 2>&1
 cd /d "%workdir%" >nul 2>&1
