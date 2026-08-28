@@ -4,13 +4,12 @@ Batch script to quickly deploy Minecraft Servers
 ### Install
 [Download the script](https://github.com/M4RCK5/MCHost/archive/refs/heads/main.zip) and launch it.
 
-Note: to auto-start the script with windows add it to "shell:startup".
-
 #### Launch Parametters
 ```
  -h  Show all launch parameters.
  -d  Open all web dashboards.
  -f  Open MCHost folder.
+ -a  Launch after boot.
  -s  Stop all tasks.
  -r  Reset playit.gg proxy settings.
  -u  Update tools and start all tasks.
