@@ -4,6 +4,7 @@ pushd "%~dp0"
 
 if /i "%~1"=="-h" call :help & goto :quit
 if /i "%~1"=="-d" call :dash & goto :quit
+if /i "%~1"=="-b" call :boot & goto :quit
 if /i "%~1"=="-s" call :stop & goto :quit
 
 call :workdir || goto :quit
@@ -43,6 +44,7 @@ echo.
 echo    -h  Show all launch parameters.
 echo    -d  Open all web dashboards.
 echo    -f  Open MCHost folder.
+echo    -b  Launch after boot.
 echo    -s  Stop all tasks.
 echo    -r  Reset playit.gg proxy settings.
 echo    -u  Update tools and start all tasks.
@@ -58,7 +60,6 @@ start "" "https://127.0.0.1:8443/"
 goto :eof
 
 :workdir
-set "custom_workdir="
 set "workdir=%systemdrive%\MCHost"
 
 if exist "MCHost.txt" for /f "delims=" %%a in (MCHost.txt) do (
@@ -158,6 +159,17 @@ if exist "crafty.exe" (
 	if exist "java\jre\bin\java.exe" set "Path=%workdir%\java\jre\bin;%Path%"
 	start "Crafty Controller" /min "crafty.exe"
 )
+goto :eof
+
+:boot
+set "startup=%appdata%\Microsoft\Windows\Start Menu\Programs\Startup"
+(
+	echo @echo off
+	echo start "" "%~f0" ^>nul 2^>^&1
+	echo exit /b 0
+)>"%startup%\MCHost-Shortcut.bat"
+
+start "" "%startup%"
 goto :eof
 
 
