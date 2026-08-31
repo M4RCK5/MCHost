@@ -9,7 +9,7 @@ Batch script to quickly deploy Minecraft Servers
  -h  Show all launch parameters.
  -d  Open all web dashboards.
  -f  Open MCHost folder.
- -a  Launch after boot.
+ -b  Launch after boot.
  -s  Stop all tasks.
  -r  Reset playit.gg proxy settings.
  -u  Update tools and start all tasks.
