@@ -61,10 +61,7 @@ goto :eof
 
 :workdir
 set "workdir=%systemdrive%\MCHost"
-
-if exist "MCHost.txt" for /f "delims=" %%a in (MCHost.txt) do (
-    for /d %%b in (%%~a) do set "workdir=%%~fb\MCHost"
-)
+findstr /i "portable" "%~n0" >nul 2>&1 && set "workdir=%~dp0MCHost"
 
 md "%workdir%" >nul 2>&1
 cd /d "%workdir%" >nul 2>&1
