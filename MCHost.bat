@@ -61,7 +61,7 @@ goto :eof
 
 :workdir
 set "workdir=%systemdrive%\MCHost"
-findstr /i "portable" "%~n0" >nul 2>&1 && set "workdir=%~dp0MCHost"
+echo %~n0 | findstr /i "portable" >nul 2>&1 && set "workdir=%~dp0MCHost"
 
 md "%workdir%" >nul 2>&1
 cd /d "%workdir%" >nul 2>&1
