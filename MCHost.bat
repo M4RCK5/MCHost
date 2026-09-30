@@ -30,9 +30,9 @@ exit /b 0
 :help
 echo.
 echo MCHost is a batch script to quickly deploy Minecraft Servers.
-echo It uses "VoxelDash-One CLI (https://voxeldash.dev/)".
+echo It uses [VoxelDash-One](https://voxeldash.dev/).
 echo.
-echo Remote administration: "Zerotier (https://www.zerotier.com/one/)" recommended.
+echo Remote administration: [Zerotier-One](https://www.zerotier.com/one/) recommended.
 echo.
 echo Launch Parameters:
 echo.
