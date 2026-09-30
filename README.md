@@ -4,6 +4,8 @@ Batch script to quickly deploy Minecraft Servers
 ### Install
 [Download the script](https://github.com/M4RCK5/MCHost/archive/refs/heads/main.zip) and launch it.
 
+Remote administration: [Zerotier](https://www.zerotier.com/one/) recommended.
+
 #### Launch Parametters
 ```
  -h  Show all launch parameters.
@@ -11,14 +13,9 @@ Batch script to quickly deploy Minecraft Servers
  -f  Open MCHost folder.
  -b  Launch after boot.
  -s  Stop all tasks.
- -r  Reset playit.gg proxy settings.
- -u  Update tools and start all tasks.
+ -u  Force update.
  -w  Wipe all MCHost files.
- -p  Start only playit.gg.
- -c  Start only Crafty Controller.
 ```
 
 ### Dependencies
- - [playit.gg](https://github.com/playit-cloud/playit-agent/)
- - [Crafty Controller](https://gitlab.com/crafty-controller/crafty-4)
- - [Java](https://github.com/adoptium)
+ - [VoxelDash-One](https://github.com/gnmyt/VoxelDash)
