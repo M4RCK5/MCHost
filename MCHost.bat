@@ -36,7 +36,6 @@ echo.
 echo MCHost is a batch script to quickly deploy Minecraft Servers.
 echo It uses "playit.gg (cli) + Java (isolated) + Crafty Controller".
 echo.
-echo Custom workdir: unquoted path in "MCHost.txt" next to the script.
 echo Remote administration: "Zerotier" recommended.
 echo.
 echo Launch Parameters:
