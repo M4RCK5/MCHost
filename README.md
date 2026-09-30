@@ -4,7 +4,7 @@ Batch script to quickly deploy Minecraft Servers
 ### Install
 [Download the script](https://github.com/M4RCK5/MCHost/archive/refs/heads/main.zip) and launch it.
 
-Remote administration: [Zerotier](https://www.zerotier.com/one/) recommended.
+Remote administration: [Zerotier-One](https://www.zerotier.com/one/) recommended.
 
 #### Launch Parametters
 ```
