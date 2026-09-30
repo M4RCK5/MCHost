@@ -3,24 +3,20 @@
 pushd "%~dp0"
 
 if /i "%~1"=="-h" call :help & goto :quit
-if /i "%~1"=="-d" call :dash & goto :quit
 if /i "%~1"=="-b" call :boot & goto :quit
 if /i "%~1"=="-s" call :stop & goto :quit
 
 call :workdir || goto :quit
-if /i "%~1"=="-f" start "" "%workdir%" & goto :quit
+call :load_vars
+if /i "%~1"=="-d" call :dash & goto :quit
+if /i "%~1"=="-f" start "" explorer.exe "%workdir%" & goto :quit
 
 call :stop
 if /i "%~1"=="-w" call :wipe & goto :quit
-if /i "%~1"=="-r" call :reset & goto :quit
-
 if /i "%~1"=="-u" call :update
-call :install
 
-if /i "%~1"=="-p" call :playit & goto :quit
-if /i "%~1"=="-c" call :crafty & goto :quit
-call :playit
-call :crafty
+call :install
+call :start
 
 :quit
 popd
@@ -34,9 +30,9 @@ exit /b 0
 :help
 echo.
 echo MCHost is a batch script to quickly deploy Minecraft Servers.
-echo It uses "playit.gg (cli) + Java (isolated) + Crafty Controller".
+echo It uses "VoxelDash-One CLI (https://voxeldash.dev/)".
 echo.
-echo Remote administration: "Zerotier" recommended.
+echo Remote administration: "Zerotier (https://www.zerotier.com/one/)" recommended.
 echo.
 echo Launch Parameters:
 echo.
@@ -45,17 +41,27 @@ echo    -d  Open all web dashboards.
 echo    -f  Open MCHost folder.
 echo    -b  Launch after boot.
 echo    -s  Stop all tasks.
-echo    -r  Reset playit.gg proxy settings.
-echo    -u  Update tools and start all tasks.
-echo    -w  Wipe all MCHost files.
-echo    -p  Start only playit.gg.
-echo    -c  Start only Crafty Controller.
+echo    -u  Force update.
+echo    -w  Wipe Wipe all MCHost files.
 echo.
 goto :eof
 
-:dash
-start "" "https://playit.gg/login"
-start "" "https://127.0.0.1:8443/"
+:boot
+set "startup=%appdata%\Microsoft\Windows\Start Menu\Programs\Startup\MCHost-Shortcut.bat"
+
+if exist "%startup%" (
+	del /f /q "%startup%" >nul 2>&1
+	echo.
+	echo Auto-start disabled.
+) else (
+	(
+		echo @echo off
+		echo start "" "%~f0" ^>nul 2^>^&1
+		echo exit /b 0
+	)>"%startup%"
+	echo.
+	echo Auto-start enabled.
+)
 goto :eof
 
 :workdir
@@ -73,7 +79,7 @@ if not "%cd%"=="%workdir%" (
 goto :eof
 
 :stop
-taskkill /t /f /im "crafty.exe" /im "playit.exe" >nul 2>&1
+taskkill /t /f /im "voxeldash-one.exe" >nul 2>&1
 timeout /t 2 >nul 2>&1
 goto :eof
 
@@ -92,80 +98,62 @@ if %errorlevel% equ 2 (
 timeout /t 5
 goto :eof
 
-:reset
-echo.
-echo playit.gg agent reset.
-if exist "playit.exe" start "playit.gg" /b "playit.exe" --secret_path ".\playit.toml" reset >nul 2>&1
-timeout /t 5
-goto :eof
-
 :update
 echo.
 echo Starting update process...
-for /f "delims=" %%a in ('dir /b') do (
-	if exist "%%a\" (
-		if not "%%a"=="servers" rd /s /q "%%a" >nul 2>&1
-	) else (
-		if not "%%a"=="playit.toml" del /f /q "%%a" >nul 2>&1
-	)
-)
+
+rd /s /q "ui\" >nul 2>&1
+del /f /q "voxeldash-one.exe" >nul 2>&1
 goto :eof
 
 :install
-if not exist "java\jre\bin\java.exe" (
+if not exist "voxeldash-one.exe" (
 	echo.
-	echo Downloading JRE...
-	call :dl_java "java\java.zip"
-	call :ps_decomp "java\java.zip" "java"
-	del /f /q "java\java.zip" >nul 2>&1
-	for /d %%a in ("java\*") do ren "%%a" "jre" >nul 2>&1
+	echo Downloading VoxelDash...
+	call :gh_last "gnmyt" "VoxelDash" "voxeldash-one-*-windows-x64.zip" "voxeldash.zip"
+	call :ps_decomp "voxeldash.zip" "."
+	del /f /q "voxeldash.zip" >nul 2>&1
+	
+	for /d %%a in ("voxeldash-one-*-windows-x64") do (
+		xcopy "%%a" "." /s /e /q /y >nul 2>&1
+		rd /s /q "%%a" >nul 2>&1
+	)
 )
 
-if not exist "playit.exe" (
-	echo.
-	echo Downloading playit.gg agent...
-	call :dl "https://github.com/playit-cloud/playit-agent/releases/download/v0.17.1/playit-windows-x86_64-signed.exe" "playit.exe"
-)
-
-if not exist "crafty.exe" (
-	echo.
-	echo Downloading Crafty Controller...
-	call :gl_last "crafty-controller" "crafty-4" "Windows Package" "crafty.zip"
-	call :ps_decomp "crafty.zip" "."
-	del /f /q "crafty.zip" >nul 2>&1
-)
-
-md "app\config" >nul 2>&1
-(
-	echo {
-	echo     "username": "admin",
-	echo     "password": "12345678"
-	echo }
-)>"app\config\default.json"
-goto :eof
-
-:playit
-if exist "playit.exe" (
-	start "playit.gg" /min "playit.exe" --secret_path ".\playit.toml" start
+if not exist "MCHost.ini" (
+	(
+		echo ; MCHost configuration
+		echo PORT=7867
+		echo VOXELDASH_HOME=data
+		echo VOXELDASH_UI=ui/dist
+		echo MASTER_HOST=127.0.0.1
+	)> "MCHost.ini"
 )
 goto :eof
 
-:crafty
-if exist "crafty.exe" (
-	if exist "java\jre\bin\java.exe" set "Path=%workdir%\java\jre\bin;%Path%"
-	start "Crafty Controller" /min "crafty.exe"
+:load_vars
+if exist "MCHost.ini" (
+	call :in_var PORT "MCHost.ini"
+	call :in_var VOXELDASH_HOME "MCHost.ini"
+	call :in_var VOXELDASH_UI "MCHost.ini"
+	call :in_var MASTER_HOST "MCHost.ini"
 )
 goto :eof
 
-:boot
-set "startup=%appdata%\Microsoft\Windows\Start Menu\Programs\Startup"
-(
-	echo @echo off
-	echo start "" "%~f0" ^>nul 2^>^&1
-	echo exit /b 0
-)>"%startup%\MCHost-Shortcut.bat"
+:dash
+if exist "MCHost.ini" (
+	start "" "https://playit.gg/login"
+	start "" "http://127.0.0.1:%PORT%/login"
+) else (
+	echo.
+	echo MCHost.ini not found.
+)
+goto :eof
 
-start "" "%startup%"
+:start
+if exist "voxeldash-one.exe" (
+	start "VoxelDash" /min "voxeldash-one.exe"
+)
 goto :eof
 
 
@@ -173,23 +161,13 @@ goto :eof
 
 :: Tools
 
-:dl url output
-md "%~dp2" >nul 2>&1
-powershell -noprofile -command "$progresspreference = 'silentlycontinue'; invoke-webrequest -uri '%~1' -outfile '%~2'" >nul 2>&1
+:in_var key path
+for /f "tokens=2 delims=;=" %%a in ('findstr /b /i /c:"%~1=" "%~2" 2^>nul') do set "%~1=%%a"
 goto :eof
 
-:dl_java output
-setlocal enabledelayedexpansion
-set "api_url=https://api.adoptium.net/v3"
-md "%~dp1" >nul 2>&1
-for /f "delims=" %%a in ('powershell -noprofile -command "(invoke-restmethod '%api_url%/info/available_releases').most_recent_lts"') do set "latest=%%a"
-set "dl_url=!api_url!/binary/latest/!latest!/ga/windows/x64/jre/hotspot/normal/eclipse"
-powershell -noprofile -command "$progresspreference = 'silentlycontinue'; invoke-webrequest -uri '!dl_url!' -outfile '%~1'" >nul 2>&1
-endlocal
-goto :eof
-
-:gl_last user repo pattern output
-powershell -noprofile -command "$progresspreference = 'silentlycontinue'; iwr ((irm 'https://gitlab.com/api/v4/projects/%~1%%2F%~2/releases?per_page=1')[0].assets.links | where name -eq '%~3' | select -expand url) -outfile '%~4'"
+:gh_last user repo pattern output
+md "%~dp4" >nul 2>&1
+powershell -noprofile -command "$progresspreference = 'silentlycontinue'; iwr ((irm 'https://api.github.com/repos/%~1/%~2/releases/latest').assets | where-object {$_.browser_download_url -like '*%~3*'} | select-object -first 1).browser_download_url -outfile '%~4' -usebasicparsing"
 goto :eof
 
 :ps_decomp file output
