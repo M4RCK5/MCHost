@@ -42,7 +42,7 @@ echo    -f  Open MCHost folder.
 echo    -b  Launch after boot.
 echo    -s  Stop all tasks.
 echo    -u  Force update.
-echo    -w  Wipe Wipe all MCHost files.
+echo    -w  Wipe all MCHost files.
 echo.
 goto :eof
 
